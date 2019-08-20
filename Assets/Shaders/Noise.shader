@@ -53,37 +53,30 @@
 
         void surf (Input IN, inout SurfaceOutput o) 
 		{
-			int N = 100;
+			int N = 100; //кол-во колец
+			float3 n0; //вектов в сферических координатах который передаем в функцию шума
 
-			float barrier = 0.95;
-			float3 n0;
-
-			float radius = 10; //radius			
+			float radius = 10; //radius сферы
 
 			float r = sqrt(IN.worldPos.x * IN.worldPos.x + IN.worldPos.z * IN.worldPos.z);
 						
-			float d = 1;
-			float delta_b = M_2PI / N;
+			float delta_b = M_2PI / N; //шаг в плоскости XY
 
 			float k = 1;// (1 - step(r, 0));
 
-			float3 n_start;
+			float3 n_start; //можно удалить
 			n_start.x = IN.worldPos.x * cos(0) - IN.worldPos.z * sin(0);
 			n_start.z = IN.worldPos.x * sin(0) + IN.worldPos.z * cos(0);
 			n_start.y = IN.worldPos.y;
 
 			///////////////////////
-			n0.z = k * asin(clamp(n_start.y / radius, -1, 1));
-			//n0.z += M_PI2;
+			n0.z = k * asin(clamp(n_start.y / radius, -1, 1)); //угол в плоскости XY
 			
-			float h = floor(n0.z / delta_b);
-			int N1 = floor(N * cos(delta_b * h));
-			int N2 = floor(N * cos(delta_b * clamp(h - 1, 0, h)));
-			float delta_a = M_2PI / N1;
-			float shift = delta_a * (N2 - N1) / 2;
-
-			//float kz = step(n_start.y, 0);
-			//n0.z = M_2PI * kz + (1 - 2 * kz) * n0.z;//n0.z Э [0, 2pi]
+			float h = floor(n0.z / delta_b); //считаем на каком кольце находимся
+			int N1 = floor(N * cos(delta_b * h)); //кол-во сегментов на текущем кольце
+			int N2 = floor(N * cos(delta_b * clamp(h - 1, 0, h))); //кол-во сегментов на предыдущем кольце
+			float delta_a = M_2PI / N1; //шаг в плоскости XZ (на кольце)
+			float shift = delta_a * (N2 - N1) / 2; //поворот колец
 
 			///////////////////////
 			n0.x = k * asin(clamp(n_start.z / r, -1, 1));
