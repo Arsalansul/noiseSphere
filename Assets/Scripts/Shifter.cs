@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class Shifter : MonoBehaviour
 {
-    [Range(0, 6.29f)]
+    [Range(0, 1f)]
     public float shift;
 
     private Material mat;
